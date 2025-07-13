@@ -1,28 +1,24 @@
 import { Routes } from '@angular/router';
-import {LaunchesPage} from './features/launches-page/launches-page';
-import {HomePage} from './features/home/home-page/home-page';
-import {RocketsPage} from './features/rockets/rockets-page/rockets-page';
-import {AboutPage} from './features/about/about/about-page/about-page';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomePage,
+    loadComponent: () => import('./features/home/home-page/home-page').then(m => m.HomePage),
     title: 'Home'
   },
   {
     path: 'launches',
-    component: LaunchesPage,
+    loadComponent: () => import('./features/launches-page/launches-page').then(m => m.LaunchesPage),
     title: 'Launches'
   },
   {
     path: 'rockets',
-    component: RocketsPage,
+    loadComponent: () => import('./features/rockets/rockets-page/rockets-page').then(m => m.RocketsPage),
     title: 'Rockets'
   },
   {
     path: 'about',
-    component: AboutPage,
+    loadComponent: () => import('./features/about/about/about-page/about-page').then(m => m.AboutPage),
     title: 'About'
   }
 ];

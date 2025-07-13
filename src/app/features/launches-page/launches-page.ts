@@ -4,6 +4,7 @@ import {LaunchService} from '../../core/services/launches.service';
 
 @Component({
   selector: 'app-launches-page',
+  standalone: true,
   imports: [
     DatePipe
   ],
