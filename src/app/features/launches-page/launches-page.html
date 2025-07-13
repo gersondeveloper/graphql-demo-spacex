@@ -1,0 +1,8 @@
+<p>launches-page works!</p>
+@for (launch of launches(); track launch.id) {
+  <div class="launch-card">
+    <h2>{{ launch.name }}</h2>
+    <p>Date: {{ launch.date | date }}</p>
+    <p>Status: {{ launch.status }}</p>
+  </div>
+}
