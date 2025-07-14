@@ -1,8 +1,12 @@
-<p>launches-page works!</p>
-@for (launch of launches(); track launch.id) {
-  <div class="launch-card">
-    <h2>{{ launch.name }}</h2>
-    <p>Date: {{ launch.date | date }}</p>
-    <p>Status: {{ launch.status }}</p>
-  </div>
+<p>launches-page works!!!</p>
+@if (loading()) {
+  <div>Loading launches...</div>
+} @else {
+  @for (launch of launches(); track launch.id) {
+    <div class="launch-card">
+      <h2>Mission name: {{ launch.mission_name }}</h2>
+      <p>Date: {{ launch.launch_date_utc | date }}</p>
+      <p>Rocket: {{ launch.rocket.rocket_name }}</p>
+    </div>
+  }
 }

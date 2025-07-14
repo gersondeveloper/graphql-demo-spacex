@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {LaunchService} from '../../core/services/launches.service';
 
@@ -14,9 +14,12 @@ import {LaunchService} from '../../core/services/launches.service';
 export class LaunchesPage {
   private service = inject(LaunchService);
 
-  readonly launches = signal<any[]>([]);
+  // Usando os signals do serviço diretamente
+  readonly launches = this.service.launches;
+  readonly loading = this.service.loading;
 
   constructor() {
+    // Carregando os dados ao inicializar o componente
     this.service.loadLaunches();
   }
 }
