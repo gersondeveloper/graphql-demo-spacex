@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { GridReadyEvent } from 'ag-grid-community';
+import { GridReadyEvent, themeAlpine } from 'ag-grid-community';
 import { ROCKETS_COLUMN_DEFS } from '@shared/ag-grid/rockets-grid.config';
 import { BASE_GRID_CONFIG } from '@shared/ag-grid/base-grid.config';
 import { RocketService } from '@services/rockets.service';
@@ -32,4 +32,6 @@ export class RocketsPageComponent {
       },
     });
   }
+
+  protected readonly themeAlpine = themeAlpine;
 }
