@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {LaunchService} from '../../core/services/launches.service';
+import {LaunchService} from '@services/launches.service';
 
 @Component({
   selector: 'app-launches-page',
