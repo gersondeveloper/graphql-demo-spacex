@@ -1,10 +1,8 @@
 <ag-grid-angular
-  class="ag-theme-alpine"
   style="width: 100%; height: 600px;"
   [columnDefs]="columnDefs"
   [defaultColDef]="defaultColDef"
   [rowModelType]="'clientSide'"
-  [pagination]="false"
   [theme]="themeAlpine"
   [infiniteInitialRowCount]="1"
   (gridReady)="onGridReady($event)"
