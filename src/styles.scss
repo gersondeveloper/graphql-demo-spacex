@@ -1,5 +1,17 @@
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  padding: 0;
+}
 
 .ag-theme-alpine .ag-cell {
   white-space: normal !important;
+}
+
+ag-grid-angular {
+  height: 100%;
+  width: 100%;
 }

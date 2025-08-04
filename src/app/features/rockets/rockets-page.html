@@ -1,9 +1,4 @@
 <ag-grid-angular
-  style="width: 100%; height: 600px;"
-  [columnDefs]="columnDefs"
-  [defaultColDef]="defaultColDef"
-  [rowModelType]="'clientSide'"
-  [theme]="themeAlpine"
-  [infiniteInitialRowCount]="1"
+  [gridOptions]="gridOptions"
   (gridReady)="onGridReady($event)"
 ></ag-grid-angular>

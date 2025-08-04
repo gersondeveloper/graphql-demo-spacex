@@ -1,6 +1,7 @@
-
-<main>
-  <h1 class="text-3xl font-bold underline">Welcome to the App!</h1>
-  <p>This is a simple application demonstrating the use of HTML and Angular.</p>
-  <router-outlet></router-outlet>
-</main>
+<div class="grid grid-cols-[15vw_1fr] [&_*:h-full] h-screen">
+    <app-nav-side-bar class=""></app-nav-side-bar>
+    <main class="bg-slate-400">
+        <router-outlet>
+        </router-outlet>
+    </main>
+</div>

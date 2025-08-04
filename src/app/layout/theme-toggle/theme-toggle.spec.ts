@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RocketsPageComponent as RocketsPage } from './rockets-page';
+import { ThemeToggle } from './theme-toggle';
 
-describe('RocketsPage', () => {
-  let component: RocketsPage;
-  let fixture: ComponentFixture<RocketsPage>;
+describe('ThemeToggle', () => {
+  let component: ThemeToggle;
+  let fixture: ComponentFixture<ThemeToggle>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RocketsPage]
+      imports: [ThemeToggle]
     })
-      .compileComponents();
+    .compileComponents();
 
-    fixture = TestBed.createComponent(RocketsPage);
+    fixture = TestBed.createComponent(ThemeToggle);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

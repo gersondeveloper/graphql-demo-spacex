@@ -1,4 +1,6 @@
-export const BASE_GRID_CONFIG = {
+import { GridOptions } from "ag-grid-community";
+
+export const BASE_GRID_CONFIG : GridOptions = {
   defaultColDef: {
     sortable: true,
     filter: true,
