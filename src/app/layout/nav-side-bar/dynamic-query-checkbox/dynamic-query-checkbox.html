@@ -2,11 +2,12 @@
   <label class="flex justify-between">
     <input
       type="checkbox"
+      [checked]="isChecked"
       (change)="onCheckboxChanged($event)"
       name=""
     >
     <span>
-      Name
+      {{computedQueryFieldName()}}
     </span>
   </label>
 </ng-container>
