@@ -3,29 +3,31 @@
     class="flex flex-col gap-y-1 p-4 h-full w-full **:block [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
   >
     @for (navLink of navLinks; track navLink.goTo) {
-    <li class="border-2 border-slate-100/60">
-      <a
-        class="w-full"
-        [href]="navLink.goTo"
-      >
+      <li class="border-2 border-slate-100/60">
+        <a
+          class="w-full"
+          [href]="navLink.goTo"
+        >
         <span class="text-center">
-          {{navLink.pageName}}
+          {{ navLink.pageName }}
         </span>
-      </a>
-    </li>
+        </a>
+      </li>
     }
   </ul>
-  <ul
-    class="flex flex-col gap-y-1 p-4 h-full w-full [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
-  >
-    @for (b of navLinks; track b.pageName) {
-    <app-dynamic-query-checkbox>
-
-    </app-dynamic-query-checkbox>
-    }
-    <li class="[&_*]:cursor-pointer">
-      <button class="bg-slate-800 p-1 w-full">Fetch</button>
-    </li>
-  </ul>
+  @defer (when shouldRenderQueryBuilder()) {
+    <ul
+      class="flex flex-col gap-y-1 p-4 h-full w-full [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
+    >
+      @for (queryField of Object.values(schema); track queryField) {
+        <app-dynamic-query-checkbox [queryField]="queryField">
+        </app-dynamic-query-checkbox>
+      }
+      <li class="[&_*]:cursor-pointer">
+        <button form="fetch-query-form" class="bg-slate-800 p-1 w-full">Fetch</button>
+      </li>
+      <form id="fetch-query-form" (submit)="onFetchSubmission($event)" method="get"></form>
+    </ul>
+  }
   <app-theme-toggle class="mt-auto [&>*:w-full] text-center"></app-theme-toggle>
 </nav>
