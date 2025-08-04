@@ -1,13 +1,15 @@
-export interface LaunchResponse {
+export interface PastLaunchResponse {
   data: {
-    launches: Launch[];
+    launchesPast: Launch[];
   }
 }
 
 interface Launch {
   mission_name: string;
-  launch_date_utc: Date;
-  rocket: {
-    rocket_name: string;
-  };
+  launch_date_utc: string;
+  rocket: Rocket;
+}
+
+interface Rocket {
+  rocket_name: string;
 }
