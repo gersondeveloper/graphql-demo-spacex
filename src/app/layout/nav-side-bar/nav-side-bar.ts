@@ -25,5 +25,3 @@ export class NavSideBar {
     { goTo: "/about", pageName: "About" },
   ]
 }
-
-const faggotTW = ``;
