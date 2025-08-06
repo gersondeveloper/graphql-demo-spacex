@@ -1,9 +1,16 @@
-import { GridOptions } from "ag-grid-community";
-import { Injectable } from "@angular/core";
+import {ColDef} from "ag-grid-community";
+import {Injectable} from "@angular/core";
 
-@Injectable({ providedIn: "root" })
+@Injectable({providedIn: "root"})
 export class GridPageService {
-  // getCurrentModel(): GridOptions<any>  {
-    
-  // }
+  private query: string = `
+  `;
+
+  addField(field: ColDef<any, any> | undefined) {
+    console.log("added\n" + field);
+  }
+
+  removeField(field: ColDef<any, any> | undefined) {
+    console.log("removed\n" + field);
+  }
 }
