@@ -2,6 +2,11 @@ import {ColDef} from "ag-grid-community";
 import {Injectable} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter, map} from 'rxjs';
+class GridPageRouteData {
+  schema: ColDef[] | undefined;
+  queryName: string | undefined;
+  queryMethod: string | undefined;
+}
 
 @Injectable({providedIn: "root"})
 export class GridPageService {
@@ -19,8 +24,8 @@ export class GridPageService {
           while (child) {
             if (child.firstChild) {
               child = child.firstChild;
-            } else if (child.snapshot.data && child.snapshot.data["schema"]) {
-              return child.snapshot.data["schema"];
+            } else if (child.snapshot.data) {
+              return child.snapshot.data;
             } else {
               return null;
             }
@@ -30,7 +35,12 @@ export class GridPageService {
       )
       .subscribe((data: any) => {
         if (data) {
-          this.schema = data;
+          this.routeData = data;
+          this.schema = data.schema;
+          this.query = `
+query ${this.routeData.queryName}($limit: Int, $offset: Int) {
+  ${this.routeData.queryMethod}(limit: $limit, offset: $offset) {
+`;
           for (const schemaElement of this.schema!) {
             this.addField(schemaElement);
           }
