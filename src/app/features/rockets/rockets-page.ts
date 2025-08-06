@@ -28,7 +28,6 @@ export class RocketsPageComponent {
       .subscribe({
         next: (res) => {
           const rockets = res.data?.rockets ?? [];
-          console.log('Rockets data:', rockets);
           event.api.setGridOption('rowData', rockets);
         },
         error: (err) => {

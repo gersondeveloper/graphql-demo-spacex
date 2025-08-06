@@ -31,7 +31,6 @@ export class LaunchesPage {
       .subscribe({
         next: (res) => {
           const launches = res.data?.launchesPast ?? [];
-          console.log('Launches data:', launches);
           event.api.setGridOption('rowData', launches);
         },
         error: (err) => {
