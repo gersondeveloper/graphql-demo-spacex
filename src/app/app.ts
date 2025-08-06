@@ -17,40 +17,13 @@ import {GridPageService} from '@services/grid-page.service';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App {
   protected readonly title = signal('graphql-demo-spacex');
-  schema: ColDef[] | undefined;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
-  }
-
-  ngOnInit() {
-    this.router
-      .events
-      .pipe(
-        filter(event => event instanceof NavigationEnd),
-        map(() => {
-          let child = this.route.firstChild;
-          while (child) {
-            if (child.firstChild) {
-              child = child.firstChild;
-            } else if (child.snapshot.data && child.snapshot.data["schema"]) {
-              return child.snapshot.data["schema"];
-            } else {
-              return null;
-            }
-          }
-          return null;
-        })
-      )
-      .subscribe((data: any) => {
-        if (data) {
-          this.schema = data;
-        }
-      });
+  constructor(private gridPageService: GridPageService) {
   }
 
   shouldRenderOutlet() {
-    return this.schema !== null;
+    return this.gridPageService.schema !== null;
   }
 }

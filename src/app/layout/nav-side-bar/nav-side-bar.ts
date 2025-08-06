@@ -21,11 +21,11 @@ interface NavLink {
   encapsulation: ViewEncapsulation.None,
 })
 export class NavSideBar implements OnInit {
-  schema = input<ColDef[]>();
-
   ngOnInit(): void {
 
   }
+
+  constructor(private gridPageService: GridPageService) {}
 
   navLinks: NavLink[] = [
     {goTo: "", pageName: "Home"},
@@ -35,6 +35,6 @@ export class NavSideBar implements OnInit {
   ];
 
   shouldRenderQueryBuilder() {
-    return this.schema() !== undefined;
+    return this.gridPageService.schema !== undefined;
   }
 }

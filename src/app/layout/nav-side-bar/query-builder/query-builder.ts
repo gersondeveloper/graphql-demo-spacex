@@ -1,6 +1,6 @@
-import {Component, input} from '@angular/core';
+import {Component, computed} from '@angular/core';
 import {DynamicQueryCheckbox} from '../dynamic-query-checkbox/dynamic-query-checkbox';
-import {ColDef} from 'ag-grid-community';
+import {GridPageService} from '@services/grid-page.service';
 
 @Component({
   selector: 'app-query-builder',
@@ -11,7 +11,10 @@ import {ColDef} from 'ag-grid-community';
   styleUrl: './query-builder.scss'
 })
 export class QueryBuilder {
-  schema = input<ColDef[]>();
+  constructor(private gridPageService: GridPageService) {
+  }
+
+  computedColDef = computed(() => this.gridPageService.schema)
 
   onFetchSubmission(event: any) {
     event.preventDefault();
