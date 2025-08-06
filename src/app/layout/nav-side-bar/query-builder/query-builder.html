@@ -8,7 +8,8 @@
     </app-dynamic-query-checkbox>
   }
   <li class="[&_*]:cursor-pointer my-2">
-    <button form="fetch-query-form" class="bg-slate-800 p-1 w-full">Fetch</button>
+    {{isSubmitEnabled()}}
+    <button [disabled]="!isSubmitEnabled" form="fetch-query-form" class="disabled:cursor-not-allowed disabled:bg-slate-800/50 bg-slate-800 p-1 w-full">Fetch</button>
   </li>
   <form id="fetch-query-form" (submit)="onFetchSubmission($event)" method="get"></form>
 </ul>
