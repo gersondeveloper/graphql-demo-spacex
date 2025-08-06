@@ -1,0 +1,14 @@
+<ul
+  class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
+>
+  @for (colDef of schema(); track colDef) {
+    <app-dynamic-query-checkbox
+      [colDef]="colDef"
+    >
+    </app-dynamic-query-checkbox>
+  }
+  <li class="[&_*]:cursor-pointer my-2">
+    <button form="fetch-query-form" class="bg-slate-800 p-1 w-full">Fetch</button>
+  </li>
+  <form id="fetch-query-form" (submit)="onFetchSubmission($event)" method="get"></form>
+</ul>
