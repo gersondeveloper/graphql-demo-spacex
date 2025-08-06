@@ -1,4 +1,6 @@
-import { Component, computed, input } from '@angular/core';
+import {Component, computed, EventEmitter, inject, input, OnDestroy, OnInit} from '@angular/core';
+import {ColDef} from 'ag-grid-community';
+import {GridPageService} from '@services/grid-page.service';
 
 @Component({
   selector: 'app-dynamic-query-checkbox',
@@ -7,16 +9,16 @@ import { Component, computed, input } from '@angular/core';
   styleUrl: './dynamic-query-checkbox.scss'
 })
 export class DynamicQueryCheckbox {
+  // implement reactive form
   isChecked: boolean = true;
-  queryField = input<QueryBuilderField>();
-  computedQueryFieldName = computed<string>(() => this.queryField()?.displayName ?? "Not found");
+  colDef = input<ColDef>();
+  computedQueryFieldName = computed<string>(() => this.colDef()?.headerName ?? "Not found");
+
+  constructor(private readonly gridPageService: GridPageService) {
+  }
 
   onCheckboxChanged(event: any) {
-    console.log(`${this.computedQueryFieldName} is ${event.target.checked}`);
     this.isChecked = !this.isChecked;
-    // buildSchema()
-    // when it's checked - add to the query
-    // when it's unchecked - remove from the query
-    // add a way to prop drill some sort of callback that acknowledges the state change and warns the query builder about it
+    this.isChecked ? this.gridPageService.addField(this.colDef()) : this.gridPageService.removeField(this.colDef());
   }
 }
