@@ -1,7 +1,7 @@
 import {ColDef} from "ag-grid-community";
 import {Injectable} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {BehaviorSubject, filter, map} from 'rxjs';
+import {filter, map} from 'rxjs';
 
 class GridPageRouteData {
   schema: ColDef[] | undefined;
@@ -11,13 +11,6 @@ class GridPageRouteData {
 
 @Injectable({providedIn: "root"})
 export class GridPageService {
-  onQueryUpdated = new BehaviorSubject<boolean>(this.isFetchingAvailableCondition());
-  private whichFields = new Set<string>();
-
-  isFetchingAvailableCondition() {
-    return this.whichFields && this.whichFields.size > 0;
-  }
-
   routeData = new GridPageRouteData();
   schema: ColDef[] | undefined;
   private query: string = ``;
@@ -49,25 +42,8 @@ export class GridPageService {
 query ${this.routeData.queryName}($limit: Int, $offset: Int) {
   ${this.routeData.queryMethod}(limit: $limit, offset: $offset) {
 `;
-          for (const schemaElement of this.schema!) {
-            this.addField(schemaElement);
-          }
         }
       });
-  }
-
-  addField(field: ColDef<any, any> | undefined) {
-    if (field && field.field != undefined) {
-      this.whichFields.add(field.field);
-      this.onQueryUpdated.next(this.isFetchingAvailableCondition());
-    }
-  }
-
-  removeField(field: ColDef<any, any> | undefined) {
-    if (field && field.field != undefined) {
-      this.whichFields.delete(field.field);
-      this.onQueryUpdated.next(this.isFetchingAvailableCondition());
-    }
   }
 
   executeQuery() {

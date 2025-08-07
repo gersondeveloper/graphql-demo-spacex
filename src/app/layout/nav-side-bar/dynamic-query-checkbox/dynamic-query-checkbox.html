@@ -1,13 +1,11 @@
 <ng-container class="[&_*]:cursor-pointer">
   <label class="flex justify-between">
     <input
+      [formControlName]="formControlName()!"
       type="checkbox"
-      [checked]="isChecked"
-      (change)="onCheckboxChanged($event)"
-      name=""
     >
     <span>
-      {{computedQueryFieldName()}}
+      {{headerName()}}
     </span>
   </label>
 </ng-container>

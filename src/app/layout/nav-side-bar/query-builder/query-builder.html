@@ -1,15 +1,31 @@
-<ul
-  class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
+<form id="fetch-query-form"
+      [formGroup]="fieldsGroup"
+      (submit)="onFetchSubmission($event)"
 >
-  @for (colDef of computedColDef(); track colDef) {
-    <app-dynamic-query-checkbox
-      [colDef]="colDef"
-    >
-    </app-dynamic-query-checkbox>
-  }
-  <li class="[&_*]:cursor-pointer my-2">
-    {{isSubmitEnabled()}}
-    <button [disabled]="!isSubmitEnabled" form="fetch-query-form" class="disabled:cursor-not-allowed disabled:bg-slate-800/50 bg-slate-800 p-1 w-full">Fetch</button>
-  </li>
-  <form id="fetch-query-form" (submit)="onFetchSubmission($event)" method="get"></form>
-</ul>
+  <ul
+    class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
+  >
+<!--
+ 1. iterate through each abstract control
+ 2. if the control is actually a group, repeat step 1 but inside this group
+ -->
+    @for (control of computedColDef(); track control) {
+      <app-dynamic-query-checkbox
+        [formGroup]="fieldsGroup"
+        formArrayName="fields"
+        formGroupName="com"
+        [formControlName]="control.field!"
+        [headerName]="control.headerName"
+      />
+    }
+    <li class="[&_*]:cursor-pointer my-2">
+      <button
+        class="disabled:cursor-not-allowed disabled:bg-slate-800/50 bg-slate-800 p-1 w-full"
+        [disabled]="!fieldsGroup.valid"
+        type="submit"
+      >
+        Fetch
+      </button>
+    </li>
+  </ul>
+</form>
