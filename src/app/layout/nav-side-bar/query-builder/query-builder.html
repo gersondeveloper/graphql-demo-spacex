@@ -1,28 +1,35 @@
-<form id="fetch-query-form"
-      [formGroup]="fieldsGroup"
-      (submit)="onFetchSubmission($event)"
+<form id="fetch-query-form" (submit)="onFetchSubmission($event)"
 >
   <ul
+    [formGroup]="form"
     class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
   >
-<!--
- 1. iterate through each abstract control
- 2. if the control is actually a group, repeat step 1 but inside this group
- -->
-    @for (control of computedColDef(); track control) {
-      <app-dynamic-query-checkbox
-        [formGroup]="fieldsGroup"
-        formArrayName="fields"
-        formGroupName="com"
-        [formControlName]="control.field!"
-        [headerName]="control.headerName"
-      />
+    @for (simpleColDef of simpleColDefs; track $index; let i = $index) {
+<!--      <app-dynamic-query-checkbox-->
+<!--        formArrayName="fields"-->
+<!--        [index]="i"-->
+<!--        [headerName]="simpleColDef.headerName"-->
+<!--      />-->
+      <ng-container [formGroup]="form" class="[&_*]:cursor-pointer">
+        <label formArrayName="fields" for="{{i}}" class="flex justify-between">
+          <input
+            [formControlName]="i"
+            id="{{i}}"
+            type="checkbox"
+          >
+          <span>
+            {{ simpleColDef.headerName }}
+          </span>
+        </label>
+      </ng-container>
     }
+
+    <button (click)="printFields()">Print fields</button>
     <li class="[&_*]:cursor-pointer my-2">
       <button
         class="disabled:cursor-not-allowed disabled:bg-slate-800/50 bg-slate-800 p-1 w-full"
-        [disabled]="!fieldsGroup.valid"
         type="submit"
+        [disabled]="!form.valid"
       >
         Fetch
       </button>

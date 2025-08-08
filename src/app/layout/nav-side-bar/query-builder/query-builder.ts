@@ -1,15 +1,11 @@
-import {Component, computed, OnDestroy, signal, WritableSignal} from '@angular/core';
-import {DynamicQueryCheckbox} from '../dynamic-query-checkbox/dynamic-query-checkbox';
+import {Component, computed} from '@angular/core';
 import {GridPageService} from '@services/grid-page.service';
 import {AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn} from '@angular/forms';
-import {ColDef} from 'ag-grid-community';
-
 
 @Component({
   selector: 'app-query-builder',
   imports: [
-    DynamicQueryCheckbox,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './query-builder.html',
   styleUrl: './query-builder.scss'
@@ -38,10 +34,8 @@ export class QueryBuilder {
   }
 
   computedColDef = computed(() => this.gridPageService.schema);
-  private fieldsArray = new FormArray(new Array<AbstractControl>(), this.minSelectedCheckboxes(1));
-  fieldsGroup: FormGroup = new FormGroup({
-    fields: this.fieldsArray,
-    com: new FormGroup({})
+  form: FormGroup = new FormGroup({
+    fields: new FormArray(new Array<AbstractControl>(), this.minSelectedCheckboxes(1)),
   });
 
   constructor(private gridPageService: GridPageService, private formBuilder: FormBuilder) {
@@ -54,32 +48,44 @@ export class QueryBuilder {
 
       const {field} = colDef;
 
-      if (field.includes(".") && !this.fieldsArray.get(field)) {
-        const groupName = field.substring(0, field?.indexOf("."));
-        this.fieldsGroup.addControl(groupName, this.formBuilder.group({}));
-        continue;
-      }
-
-      // FIND A WAY TO CREATE NESTED GROUPS TO MATCH THE SHAPE OF THE MODEL
-      // STRINGIFY THE FORM AND REMOVE THE VALUES SO IT TURNS INTO THE QUERY
-
       const formControl = this.formBuilder
         .control<[string, boolean]>([field, true]);
-      this.fieldsArray.push(formControl);
-      this.fieldsGroup.addControl(field, formControl);
+      this.addField(formControl);
+    }
+  }
+
+  get fields() {
+    return this.form.get("fields") as FormArray;
+  }
+
+  addField(formControl: AbstractControl) {
+    this.fields.push(formControl);
+  }
+
+  get simpleColDefs() {
+    const colDefs = this.computedColDef();
+
+    if (!colDefs) {
+      return [];
     }
 
-    // this.fieldsArray.controls.forEach(field => {
-    //   console.log(field);
-    // })
-
-    Object.keys(this.fieldsGroup.controls).forEach(field => {
-      console.log(field);
-    })
+    return colDefs.map(({field, headerName}) => ({
+      field,
+      headerName
+    }));
   }
 
   onFetchSubmission(event: any) {
     event.preventDefault();
     this.gridPageService.executeQuery();
+  }
+
+  printFields() {
+    Object.keys(this.fields.controls).forEach(field => {
+      const control = this.form.controls[field];
+      if (control) {
+        console.log(field, control.value);
+      }
+    });
   }
 }
