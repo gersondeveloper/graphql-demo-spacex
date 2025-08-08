@@ -1,7 +1,8 @@
 <ng-container class="[&_*]:cursor-pointer">
   <label class="flex justify-between">
     <input
-      [formControlName]="formControlName()!"
+      formArrayName="fields"
+      [formControlName]="index()!"
       type="checkbox"
     >
     <span>

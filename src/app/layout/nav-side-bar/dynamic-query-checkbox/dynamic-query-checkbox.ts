@@ -9,7 +9,7 @@ import {ReactiveFormsModule} from '@angular/forms';
   templateUrl: './dynamic-query-checkbox.html',
   styleUrl: './dynamic-query-checkbox.scss'
 })
-export class DynamicQueryCheckbox {
-  formControlName = input<string>();
+export class DynamicQueryCheckbox{
+  index = input<number>();
   headerName = input<string>();
 }
