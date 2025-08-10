@@ -6,11 +6,15 @@
     class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
   >
     @for (simpleColDef of simpleColDefs; track $index; let i = $index) {
-      <app-dynamic-query-checkbox
-        formArrayName="fields"
-        [index]="i"
-        [headerName]="simpleColDef.headerName"
-      />
+      <label formArrayName="fields" class="flex justify-between [&_*]:cursor-pointer">
+        <input
+          [formControlName]="i"
+          type="checkbox"
+        >
+        <span>
+          {{ simpleColDef.headerName }}
+        </span>
+      </label>
     }
     <li class="[&_*]:cursor-pointer my-2">
       <button
