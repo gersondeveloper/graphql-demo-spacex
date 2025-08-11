@@ -82,13 +82,14 @@ export class QueryBuilder implements AfterContentInit, OnDestroy {
 
   onFetchSubmission(event: any) {
     event.preventDefault();
-    this.gridPageService.executeQuery();
-    Object.keys(this.form.controls).forEach(field => {
-      const control = this.form.get(field);
-      if (control) {
-        console.log(field, control.value);
-      }
-    });
+    const payload = Object.keys(this.fields.controls)
+      .filter(field => this.fields.get(field))
+      .map(field => {
+        const control = this.fields.get(field);
+        return {name: this.simpleColDefs[+field].field!, value: control!.value as boolean};
+      })
+      .filter(a => a.value);
+    this.gridPageService.executeQuery(payload);
   }
 
   ngAfterContentInit(): void {
