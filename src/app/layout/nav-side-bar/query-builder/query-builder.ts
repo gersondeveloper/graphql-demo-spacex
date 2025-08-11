@@ -1,6 +1,20 @@
-import {Component, computed} from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  computed,
+  inject, OnDestroy,
+} from '@angular/core';
 import {GridPageService} from '@services/grid-page.service';
-import {AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControlStatus,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidatorFn
+} from '@angular/forms';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-query-builder',
@@ -10,7 +24,9 @@ import {AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
   templateUrl: './query-builder.html',
   styleUrl: './query-builder.scss'
 })
-export class QueryBuilder {
+export class QueryBuilder implements AfterContentInit, OnDestroy {
+  private formStatusChangeSubscription = new Subject<void>();
+
   /**
    * Validates if the minimum number of checkboxes is checked in the form array.
    *
@@ -22,7 +38,7 @@ export class QueryBuilder {
     const validator: ValidatorFn = (formArray: AbstractControl) => {
       if (formArray instanceof FormArray) {
         const totalSelected = formArray.controls
-          .map((control) => control.value[1])
+          .map((control) => control.value)
           .reduce((prev, next) => (next ? prev + next : prev), 0);
         return totalSelected >= min ? null : {required: true};
       }
@@ -33,25 +49,14 @@ export class QueryBuilder {
     return validator;
   }
 
+  private formBuilder = inject(FormBuilder);
   computedColDef = computed(() => this.gridPageService.schema);
   form: FormGroup = new FormGroup({
-    fields: new FormArray(new Array<AbstractControl>(), this.minSelectedCheckboxes(1)),
+    fields: this.formBuilder.array([], this.minSelectedCheckboxes(0))
   });
 
-  constructor(private gridPageService: GridPageService, private formBuilder: FormBuilder) {
-    if (!this.gridPageService.schema) {
-      throw new Error("Can't find schema");
-    }
+  constructor(private gridPageService: GridPageService) {
 
-    for (const colDef of this.gridPageService.schema) {
-      if (!colDef.field) continue;
-
-      const {field} = colDef;
-
-      const formControl = this.formBuilder
-        .control<[string, boolean]>([field, true]);
-      this.addField(formControl);
-    }
   }
 
   get fields() {
@@ -78,14 +83,41 @@ export class QueryBuilder {
   onFetchSubmission(event: any) {
     event.preventDefault();
     this.gridPageService.executeQuery();
-  }
-
-  printFields() {
-    Object.keys(this.fields.controls).forEach(field => {
-      const control = this.form.controls[field];
+    Object.keys(this.form.controls).forEach(field => {
+      const control = this.form.get(field);
       if (control) {
         console.log(field, control.value);
       }
     });
+  }
+
+  ngAfterContentInit(): void {
+    if (!this.gridPageService.schema) {
+      throw new Error("Can't find schema");
+    }
+
+    for (const colDef of this.gridPageService.schema) {
+      if (!colDef.field) continue;
+
+      // const {field} = colDef;
+
+      const formControl = this.formBuilder.control(true)
+      this.addField(formControl);
+      // this.form.addControl(field, formControl);
+    }
+
+    this.form
+      .statusChanges
+      .pipe(takeUntil(this.formStatusChangeSubscription))
+      .subscribe(this.onFormChanges);
+  }
+
+  ngOnDestroy(): void {
+    this.formStatusChangeSubscription.next();
+    this.formStatusChangeSubscription.complete();
+  }
+
+  private onFormChanges(value: FormControlStatus) {
+    console.log(value);
   }
 }

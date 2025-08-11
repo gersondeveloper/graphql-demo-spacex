@@ -1,30 +1,21 @@
-<form id="fetch-query-form" (submit)="onFetchSubmission($event)"
+<form id="fetch-query-form"
+      (submit)="onFetchSubmission($event)"
+      [formGroup]="form"
 >
   <ul
-    [formGroup]="form"
     class="flex flex-col gap-y-1 p-4 h-full w-full h-full overflow-scroll-y [&_*]:hover:text-slate-50 [&_*]:hover:font-medium [&_*]:hover:bg-slate-900"
   >
     @for (simpleColDef of simpleColDefs; track $index; let i = $index) {
-<!--      <app-dynamic-query-checkbox-->
-<!--        formArrayName="fields"-->
-<!--        [index]="i"-->
-<!--        [headerName]="simpleColDef.headerName"-->
-<!--      />-->
-      <ng-container [formGroup]="form" class="[&_*]:cursor-pointer">
-        <label formArrayName="fields" for="{{i}}" class="flex justify-between">
-          <input
-            [formControlName]="i"
-            id="{{i}}"
-            type="checkbox"
-          >
-          <span>
-            {{ simpleColDef.headerName }}
-          </span>
-        </label>
-      </ng-container>
+      <label formArrayName="fields" class="flex justify-between [&_*]:cursor-pointer">
+        <input
+          [formControlName]="i"
+          type="checkbox"
+        >
+        <span>
+          {{ simpleColDef.headerName }}
+        </span>
+      </label>
     }
-
-    <button (click)="printFields()">Print fields</button>
     <li class="[&_*]:cursor-pointer my-2">
       <button
         class="disabled:cursor-not-allowed disabled:bg-slate-800/50 bg-slate-800 p-1 w-full"
