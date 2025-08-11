@@ -38,7 +38,13 @@ export class GridPageService {
         if (data) {
           this.routeData = data;
           this.schema = data.schema;
-          this.query = `
+          this.resetQuery();
+        }
+      });
+  }
+
+  private resetQuery() {
+    this.query = `
 query ${this.routeData.queryName}($limit: Int, $offset: Int) {
   ${this.routeData.queryMethod}(limit: $limit, offset: $offset) {
 `;
