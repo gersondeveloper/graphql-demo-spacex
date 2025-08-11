@@ -52,7 +52,7 @@ export class QueryBuilder implements AfterContentInit, OnDestroy {
   private formBuilder = inject(FormBuilder);
   computedColDef = computed(() => this.gridPageService.schema);
   form: FormGroup = new FormGroup({
-    fields: this.formBuilder.array([], this.minSelectedCheckboxes(0))
+    fields: this.formBuilder.array([], this.minSelectedCheckboxes(1))
   });
 
   constructor(private gridPageService: GridPageService) {
