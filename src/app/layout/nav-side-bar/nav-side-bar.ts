@@ -1,8 +1,6 @@
-import {Component, inject, Input, input, model, OnInit, ViewEncapsulation} from '@angular/core';
-import {DynamicQueryCheckbox} from "app/layout/nav-side-bar/dynamic-query-checkbox/dynamic-query-checkbox";
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ThemeToggle} from "app/layout/theme-toggle/theme-toggle";
 import {GridPageService} from '@services/grid-page.service';
-import {ColDef} from 'ag-grid-community';
 import {QueryBuilder} from './query-builder/query-builder';
 
 interface NavLink {
