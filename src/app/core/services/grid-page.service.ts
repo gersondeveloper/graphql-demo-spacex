@@ -2,6 +2,7 @@ import {ColDef} from "ag-grid-community";
 import {Injectable} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter, map} from 'rxjs';
+import {GraphqlClientService} from '@queries/graphql.client';
 
 class GridPageRouteData {
   schema: ColDef[] | undefined;
@@ -15,7 +16,22 @@ export class GridPageService {
   schema: ColDef[] | undefined;
   private query: string = ``;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  // https://stackoverflow.com/questions/42694980/how-to-unflatten-a-javascript-object-in-a-daisy-chain-dot-notation-into-an-objec
+  payload: any;
+  unflatten(data: { [key: string]: any }) {
+    const result = {}
+    for (const item in data) {
+      const keys = item.split('.')
+      keys.reduce((reduced: { [key: string]: any }, value, index) => {
+        return reduced[value] ||
+          (reduced[value] = isNaN(Number(keys[index + 1])) ?
+            (keys.length - 1 == index ? data[item] : {}) : [])
+      }, result)
+    }
+    return result
+  }
+
+  constructor(private route: ActivatedRoute, private router: Router, private graphqlClient: GraphqlClientService) {
     this.router
       .events
       .pipe(
@@ -48,11 +64,44 @@ export class GridPageService {
 query ${this.routeData.queryName}($limit: Int, $offset: Int) {
   ${this.routeData.queryMethod}(limit: $limit, offset: $offset) {
 `;
-        }
-      });
   }
 
-  executeQuery() {
+  executeQuery(payload: { name: string; value: boolean; }[]) {
+    const reduced = payload.reduce((reduced, e) => {
+      reduced[e.name] = e.value;
+      return reduced;
+    }, {} as { [key: string]: any });
+    const unflattened = this.unflatten(reduced);
+
+    function sanitizeQueryString() {
+      let stringifiedUnflattened = JSON.stringify(unflattened, null, 4);
+      stringifiedUnflattened = stringifiedUnflattened.replaceAll(/(:\s(true)|(false))|(:)/g, "");
+      stringifiedUnflattened = stringifiedUnflattened.replace("{", "");
+      stringifiedUnflattened = stringifiedUnflattened.replace("\n", "");
+      stringifiedUnflattened = stringifiedUnflattened.replaceAll("\"", "");
+      const lastIndexOfClosingCurly = stringifiedUnflattened.lastIndexOf("}");
+      return stringifiedUnflattened.substring(0, lastIndexOfClosingCurly);
+    }
+
+    let stringifiedUnflattened = sanitizeQueryString();
+
+    this.resetQuery();
+
+    this.query = this.query.concat(stringifiedUnflattened);
+    this.query = this.query.concat("  }");
+    this.query = this.query.concat("\n}");
+
     console.log(this.query);
+
+    this.graphqlClient.query<any>(this.query, {limit: 10, offset: 1})
+      .subscribe(({
+          next: (res) => {
+            payload = res.data;
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
+      )
   }
 }
