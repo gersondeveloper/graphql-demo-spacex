@@ -13,7 +13,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/launches-page/launches-page').then(m => m.LaunchesPage),
     data: {
       queryName: "GetPastLaunches",
-      queryMethod: "pastLaunches",
+      queryMethod: "launchesPast",
       schema: LAUNCHES_COLUMN_DEFS
     },
     title: 'Launches',
