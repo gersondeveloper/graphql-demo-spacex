@@ -4,6 +4,7 @@ import { BASE_GRID_CONFIG } from '@shared/ag-grid/base-grid.config';
 import { RocketService } from '@services/rockets.service';
 import { Component, inject } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
+import {GridPageService} from '@services/grid-page.service';
 
 @Component({
   selector: 'app-rockets-page',
@@ -12,7 +13,6 @@ import { AgGridAngular } from 'ag-grid-angular';
   templateUrl: './rockets-page.html',
 })
 export class RocketsPageComponent {
-  rocketService = inject(RocketService);
   gridOptions: GridOptions<any> = {
     columnDefs: ROCKETS_COLUMN_DEFS,
     defaultColDef: BASE_GRID_CONFIG.defaultColDef,
@@ -20,19 +20,11 @@ export class RocketsPageComponent {
     theme: themeAlpine,
     infiniteInitialRowCount: 1,
   }
+
+  constructor(private gridPageService: GridPageService) {}
+
   onGridReady(event: GridReadyEvent) {
     const offset = 0;
     const limit = 10;
-    this.rocketService
-      .getRocketsPaginated(limit, offset)
-      .subscribe({
-        next: (res) => {
-          const rockets = res.data?.rockets ?? [];
-          event.api.setGridOption('rowData', rockets);
-        },
-        error: (err) => {
-          console.error('Error fetching rockets:', err);
-        },
-      })
   }
 }

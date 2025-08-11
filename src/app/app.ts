@@ -24,6 +24,6 @@ export class App {
   }
 
   shouldRenderOutlet() {
-    return this.gridPageService.schema !== null;
+    return true;
   }
 }
