@@ -1,7 +1,7 @@
 import {ColDef} from "ag-grid-community";
 import {Injectable} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {filter, map} from 'rxjs';
+import {BehaviorSubject, filter, map} from 'rxjs';
 import {GraphqlClientService} from '@queries/graphql.client';
 
 class GridPageRouteData {
@@ -17,7 +17,8 @@ export class GridPageService {
   private query: string = ``;
 
   // https://stackoverflow.com/questions/42694980/how-to-unflatten-a-javascript-object-in-a-daisy-chain-dot-notation-into-an-objec
-  payload: any;
+  payloadSubject = new BehaviorSubject<any>(null);
+
   unflatten(data: { [key: string]: any }) {
     const result = {}
     for (const item in data) {
@@ -96,7 +97,7 @@ query ${this.routeData.queryName}($limit: Int, $offset: Int) {
     this.graphqlClient.query<any>(this.query, {limit: 10, offset: 1})
       .subscribe(({
           next: (res) => {
-            payload = res.data;
+            this.payloadSubject.next(res.data);
           },
           error: (err) => {
             console.log(err);
