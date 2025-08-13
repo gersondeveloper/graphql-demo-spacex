@@ -1,43 +1,66 @@
 import {GridPageService} from '@services/grid-page.service';
-import {GridApi, GridOptions, GridReadyEvent} from 'ag-grid-community';
+import {GridApi, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from 'ag-grid-community';
 import {Component, OnDestroy} from '@angular/core';
 import {filter, Subject, takeUntil} from 'rxjs';
 import {AgGridAngular} from 'ag-grid-angular';
 
 @Component({
-    templateUrl: './grid-page.html',
-    imports: [
-        AgGridAngular
-    ],
+  templateUrl: './grid-page.html',
+  imports: [
+    AgGridAngular
+  ],
 })
 export class GridPage implements OnDestroy {
-    gridApi: GridApi | null = null;
-    gridOptions: GridOptions = {}
-    rowData: Array<any> | undefined = undefined;
-    private onGridDataAcquiredSubject = new Subject<void>();
+  gridApi!: GridApi;
+  gridOptions: GridOptions = {}
+  rowData: Array<any> | undefined = undefined;
+  private onGridDataAcquiredSubject = new Subject<void>();
 
-    constructor(protected gridPageService: GridPageService) {
+  constructor(protected gridPageService: GridPageService) {
+    this.gridPageService.payloadSubject
+      .pipe(
+        takeUntil(this.onGridDataAcquiredSubject),
+        filter((e) => e !== null)
+      )
+      .subscribe((data) => this.onGridDataAcquired(data));
+  }
 
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+  }
+
+  ngOnDestroy(): void {
+    this.onGridDataAcquiredSubject.next();
+    this.onGridDataAcquiredSubject.complete();
+  }
+
+  private onGridDataAcquired(data: { [key in string]: any[] }) {
+    this.rowData = data[this.gridPageService.queryMethod];
+    console.log("onGridDataAcquired", this.rowData);
+    this.gridApi.setGridOption("rowData", []);
+    // this.gridApi.setGridOption("rowData", this.rowData);
+  }
+
+  onRowDataUpdated(params: RowDataUpdatedEvent) {
+    const columns = params.api.getColumns();
+
+    if (!columns) {
+      return;
     }
 
-    onGridReady(params: GridReadyEvent) {
-        this.gridPageService.payloadSubject
-            .pipe(
-                takeUntil(this.onGridDataAcquiredSubject),
-                filter((e) => e !== null)
-            )
-            .subscribe(this.onGridDataAcquired);
-        this.gridApi = params.api;
-    }
+    const rowsNodes = params.api.getRenderedNodes();
 
-    ngOnDestroy(): void {
-        this.onGridDataAcquiredSubject.next();
-        this.onGridDataAcquiredSubject.complete();
-    }
+    columns.forEach(column => {
+      const isColumnEmpty = !rowsNodes.some(_ => {
+        const value = params.api.getColumn(column);
+        return typeof value !== "undefined" && value !== null;
+      });
 
-    private onGridDataAcquired(data: any) {
-        this.rowData = data;
-        console.log('onGridDataAcquired', data);
-        this.gridApi?.setGridOption("rowData", data);
-    }
+      if (isColumnEmpty) {
+        console.log("will hide column: " + column.getColDef().field);
+      }
+
+      params.api.setColumnsVisible([column], !isColumnEmpty);
+    });
+  }
 }
