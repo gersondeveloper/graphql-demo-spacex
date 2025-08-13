@@ -13,10 +13,23 @@ class GridPageRouteData {
 @Injectable({providedIn: "root"})
 export class GridPageService {
   routeData = new GridPageRouteData();
+  /*
+   Used to access the array inside incoming data from the API.
+  */
+  queryMethod: string = "";
+  /*
+    Used to populate the query builder and the ag grid.
+  */
   schema: ColDef[] | undefined;
+  /*
+    What will be used by the gql service's method to fetch the data.
+  */
   private query: string = ``;
 
   // https://stackoverflow.com/questions/42694980/how-to-unflatten-a-javascript-object-in-a-daisy-chain-dot-notation-into-an-objec
+  /*
+    Notifies the grid and holds the payload data so it can trigger a render.
+  */
   payloadSubject = new BehaviorSubject<any>(null);
 
   unflatten(data: { [key: string]: any }) {
@@ -55,11 +68,15 @@ export class GridPageService {
         if (data) {
           this.routeData = data;
           this.schema = data.schema;
+          this.queryMethod = data.queryMethod;
           this.resetQuery();
         }
       });
   }
 
+  /*
+    Empties the query's fields.
+  */
   private resetQuery() {
     this.query = `
 query ${this.routeData.queryName}($limit: Int, $offset: Int) {
@@ -67,6 +84,9 @@ query ${this.routeData.queryName}($limit: Int, $offset: Int) {
 `;
   }
 
+  /*
+    Fetches the data from the API and updates the behaviour subject responsible for its propagation.
+  */
   executeQuery(payload: { name: string; value: boolean; }[]) {
     const reduced = payload.reduce((reduced, e) => {
       reduced[e.name] = e.value;
@@ -74,6 +94,9 @@ query ${this.routeData.queryName}($limit: Int, $offset: Int) {
     }, {} as { [key: string]: any });
     const unflattened = this.unflatten(reduced);
 
+    /*
+      Transforms the stringified object into a valid GraphQL query.
+    */
     function sanitizeQueryString() {
       let stringifiedUnflattened = JSON.stringify(unflattened, null, 4);
       stringifiedUnflattened = stringifiedUnflattened.replaceAll(/(:\s(true)|(false))|(:)/g, "");
