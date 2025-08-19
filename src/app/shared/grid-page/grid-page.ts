@@ -42,6 +42,8 @@ export class GridPage implements OnDestroy {
   }
 
   onRowDataUpdated(params: RowDataUpdatedEvent) {
+    if (params.api.isRowDataEmpty()) return;
+
     const columns = params.api.getColumns();
 
     if (!columns) {
