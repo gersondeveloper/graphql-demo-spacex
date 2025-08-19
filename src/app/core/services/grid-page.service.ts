@@ -12,6 +12,7 @@ class GridPageRouteData {
 
 @Injectable({providedIn: "root"})
 export class GridPageService {
+  private originalSchema: ColDef[] | undefined;
   routeData = new GridPageRouteData();
   /*
    Used to access the array inside incoming data from the API.
@@ -67,6 +68,7 @@ export class GridPageService {
       .subscribe((data: any) => {
         if (data) {
           this.routeData = data;
+          this.originalSchema = data.schema;
           this.schema = data.schema;
           this.queryMethod = data.queryMethod;
           this.resetQuery();
