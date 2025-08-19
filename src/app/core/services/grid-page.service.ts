@@ -117,6 +117,14 @@ query ${this.routeData.queryName}($limit: Int, $offset: Int) {
     this.query = this.query.concat("  }");
     this.query = this.query.concat("\n}");
 
+    const payloadFields = payload.map(colDef => colDef.name);
+
+    this.schema = this.originalSchema!
+      .filter((colDef) =>
+        payloadFields.includes(colDef.field!)
+      );
+
+    // console.log("matchingFields:\n", matchingFields);
     console.log(this.query);
 
     this.graphqlClient.query<any>(this.query, {limit: 10, offset: 1})
