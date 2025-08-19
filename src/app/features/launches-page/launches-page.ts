@@ -16,7 +16,6 @@ import {AgGridAngular} from 'ag-grid-angular';
 })
 export class LaunchesPage extends GridPage {
   override gridOptions: GridOptions<any> = {
-    columnDefs: LAUNCHES_COLUMN_DEFS,
     defaultColDef: BASE_GRID_CONFIG.defaultColDef,
     rowModelType: "clientSide",
     theme: themeAlpine,

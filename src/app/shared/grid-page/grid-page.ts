@@ -35,10 +35,10 @@ export class GridPage implements OnDestroy {
   }
 
   private onGridDataAcquired(data: { [key in string]: any[] }) {
+    this.gridApi.setGridOption("columnDefs", this.gridPageService.schema);
+    this.gridApi.setGridOption("rowData", []);
     this.rowData = data[this.gridPageService.queryMethod];
     console.log("onGridDataAcquired", this.rowData);
-    this.gridApi.setGridOption("rowData", []);
-    // this.gridApi.setGridOption("rowData", this.rowData);
   }
 
   onRowDataUpdated(params: RowDataUpdatedEvent) {

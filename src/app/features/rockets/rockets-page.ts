@@ -15,7 +15,6 @@ import {AgGridAngular} from 'ag-grid-angular';
 })
 export class RocketsPageComponent extends GridPage {
   override gridOptions: GridOptions<any> = {
-    columnDefs: ROCKETS_COLUMN_DEFS,
     defaultColDef: BASE_GRID_CONFIG.defaultColDef,
     rowModelType: "clientSide",
     theme: themeAlpine,
